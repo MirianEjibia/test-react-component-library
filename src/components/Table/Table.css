@@ -1,0 +1,121 @@
+.table-component-wrapper:fullscreen, ::backdrop {
+    background-color: rgba(255,255,255,0);
+}
+
+.pagination-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 3rem;
+}
+
+.pagination-btns {
+  border: 1px solid rgb(180, 180, 239);
+}
+
+tr {
+  border-bottom: 1px solid lightblue;
+}
+
+th {
+  text-align: left;
+  color: #666;
+  padding: 3px;
+  font-size: 12px;
+}
+
+td {
+  /* padding: 1rem; */
+  padding-left: 0px;
+  color: #666;
+  font-size: 12px;
+}
+.filter-btn {
+  background-color: transparent;
+  border: none;
+}
+
+.text-style {
+  color: #666;
+  font-size: 12px;
+}
+
+.filter-dropdown-label {
+  padding-left: 1rem;
+}
+.filter-dropdown-icon {
+  font-size: 14;
+}
+
+.dropdown-menu {
+  box-shadow: 0 0 10px lightblue;
+}
+
+.border_bottom {
+  border-bottom: 1px solid lightblue;
+}
+
+.table-options-icons-wrapper {
+  padding: 8px;
+  font-size: 20px;
+  size: 10;
+  cursor: pointer;
+}
+
+.global-search-input {
+  transition: visibility 2s linear;
+}
+
+.hide-global-search {
+  width: 0;
+  padding: 0;
+}
+
+.selected-filters-collection {
+  margin-right: 3rem;
+  width: 60%;
+}
+.btn-colors {
+  background-color: lightblue;
+  color: #585151;
+  font-size: 13px;
+}
+.btn-colors:hover {
+  background-color: #5ccef3;
+  color: #585151;
+}
+.select__control {
+  border: none !important;
+  border-top: 1px solid lightblue !important;
+  border-left: 1px solid lightblue !important;
+  border-right: 1px solid lightblue !important;
+  border-top: 1px solid lightblue !important;
+  border-bottom: 2px solid lightblue !important;
+  border-radius: 0px !important;
+}
+
+.select__multi-value {
+  background-color: lightblue;
+}
+.select__multi-value__label {
+  background-color: lightblue;
+}
+.select__multi-value__remove {
+  background-color: lightblue;
+}
+.pagination-btn {
+  padding: 0px 15px;
+  height: 35px;
+}
+.blue-border-radius-five {
+  border: 1px solid lightblue;
+  border-radius: 5px;
+}
+.pagination-text {
+  font-size: 15px;
+  color: #666;
+}
+
+input[type="checkbox"] {
+  accent-color: lightblue
+  }

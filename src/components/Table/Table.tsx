@@ -13,6 +13,7 @@ import {
 import { AiOutlineFullscreenExit } from "react-icons/ai";
 import {
   MdOutlineFilterListOff,
+  MdFilterList,
   MdDensitySmall,
   MdOutlineDensityLarge,
   MdDensityMedium,
@@ -54,9 +55,9 @@ import { dateFilterFn } from "./helperFunction/filterFunctions/dateFilterFn";
 import { icons } from "react-icons";
 import { Dropdown } from "./components/Dropdown";
 import { ColumnVisibilityControlDropdown } from "./components/ColumnVisibilityControlDropdown";
-
+import { Table as TanstackTable } from "@tanstack/react-table";
 enum DencityTypes {
-  small = "smal",
+  small = "small",
   medium = "medium",
   larg = "larg",
 }
@@ -129,6 +130,7 @@ const Table = ({ backgroundColo, size, spacing, color, align }: TableProps) => {
   );
   const [globalFilter, setGlobalFilter] = React.useState("");
   const [dencityType, setDencityType] = useState(DencityTypes.medium);
+  const [showColFilters, setShowColFilters] = useState(true);
 
   const table = useReactTable({
     columns,
@@ -255,8 +257,11 @@ const Table = ({ backgroundColo, size, spacing, color, align }: TableProps) => {
           >
             {showGlobalSearch ? <MdSearchOff /> : <BiSearch />}
           </span>
-          <span className="table-options-icons-wrapper">
-            <MdOutlineFilterListOff />
+          <span
+            className="table-options-icons-wrapper"
+            onClick={() => setShowColFilters((prev) => !prev)}
+          >
+            {showColFilters ? <MdFilterList /> : <MdOutlineFilterListOff />}
           </span>
           {
             <ColumnVisibilityControlDropdown
@@ -342,7 +347,7 @@ const Table = ({ backgroundColo, size, spacing, color, align }: TableProps) => {
                           )}
                         </div>
                         {header.column.columnDef.header === ""}
-                        {header.column.getCanFilter() ? (
+                        {header.column.getCanFilter() && showColFilters ? (
                           <div>
                             {header.column.columnDef?.meta?.filterComponent({
                               column: header.column,
@@ -365,7 +370,7 @@ const Table = ({ backgroundColo, size, spacing, color, align }: TableProps) => {
                 <td
                   key={cell.id}
                   style={{
-                    padding: DencityTypesInPixels[dencityType],
+                    padding: `${DencityTypesInPixels[dencityType]}px 0px`,
                     textAlign: align,
                   }}
                 >

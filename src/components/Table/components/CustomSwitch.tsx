@@ -15,7 +15,7 @@ export function CustomSwitch({ checked }: CustomSwitchProps) {
         checked={checked}
       />
       <label className="form-check-label" for="flexSwitchCheckChecked">
-        Checked switch checkbox input
+        {/* Checked switch checkbox input */}
       </label>
     </div>
   );

@@ -51,9 +51,9 @@ export function ColumnVisibilityControlDropdown({
     setShowFilterColumn(showColumnsObj);
     console.log("showColumnsObj", showColumnsObj);
   };
-  console.log("filteredColumn", table.getFilteredRowModel());
+
   return (
-    <div className="dropdown" ref={dropdownRef}>
+    <div className="dropdown d-flex" ref={dropdownRef}>
       <button
         className="filter-btn"
         type="button"
@@ -68,37 +68,66 @@ export function ColumnVisibilityControlDropdown({
         </span>
       </button>
       <div
-        className={`dropdown-menu d-contents  ${showDropdown ? "show" : ""}`}
+        className={`dropdown-menu d-contents dropdown-menu-column-visibility  ${
+          showDropdown ? "show" : ""
+        }`}
         aria-labelledby="dropdownMenuButton"
       >
-        <a className="dropdown-item text-style pl-1">
-          {/* <CustomSwitch  /> */}
+        <div className="d-flex">
+          <a
+            className={`dropdown-item text-style pl-1 d-flex h6`}
+            onClick={() => table.toggleAllColumnsVisible()}
+          >
+            <CustomSwitch checked={table.getIsAllColumnsVisible()} />
+            <span className="filter-dropdown-label">
+              {" "}
+              <strong>
+                {table.getIsAllColumnsVisible() ? "Hide" : "Show"} all columns{" "}
+              </strong>{" "}
+            </span>
+          </a>
+        </div>
+        {table.getAllColumns().map((col, i) => {
+          return (
+            <a
+              className={`dropdown-item text-style pl-1 d-flex h6 ${
+                i === 0 && "border-top"
+              } `}
+              onClick={() => col.toggleVisibility()}
+            >
+              <CustomSwitch checked={col.getIsVisible()} />
+              <span className="filter-dropdown-label">{col.id} </span>
+            </a>
+          );
+        })}
+        {/* <a className="dropdown-item text-style pl-1 d-flex">
+          <CustomSwitch checked={true} />
           <span className="filter-dropdown-label">Cleare Sort </span>
         </a>
-        <a className="dropdown-item text-style" href="#">
-          <BiSortUp className="filter-dropdown-icon" size={18} />
+        <a className="dropdown-item text-style d-flex" href="#">
+          <CustomSwitch checked={true} />
           <span className="filter-dropdown-label">Sort by ascending</span>
         </a>
-        <a className="dropdown-item text-style border_bottom" href="#">
-          <BiSortDown className="filter-dropdown-icon" size={18} />
+        <a className="dropdown-item text-style border_bottom d-flex" href="#">
+          <CustomSwitch checked={true} />
           <span className="filter-dropdown-label">Sort by descending</span>
         </a>
-        <a className="dropdown-item text-style" href="#">
-          <VscClearAll className="filter-dropdown-icon" size={18} />
+        <a className="dropdown-item text-style d-flex"  href="#">
+          <CustomSwitch checked={true} />
           <span className="filter-dropdown-label">Cleare filter</span>
         </a>
-        <a className="dropdown-item text-style border_bottom" href="#">
-          <BiFilter className="filter-dropdown-icon" size={18} />
+        <a className="dropdown-item text-style border_bottom d-flex" href="#">
+          <CustomSwitch checked={true} />
           <span className="filter-dropdown-label"> Filter by </span>
         </a>
-        <a className="dropdown-item text-style" href="#">
-          <BiHide className="filter-dropdown-icon" size={18} />
+        <a className="dropdown-item text-style d-flex" href="#">
+          <CustomSwitch checked={true} />
           <span className="filter-dropdown-label"> Hide Column</span>
         </a>
-        <a className="dropdown-item text-style" href="#">
-          <BiColumns className="filter-dropdown-icon" size={18} />
+        <a className="dropdown-item text-style d-flex" href="#">
+          <CustomSwitch checked={true} />
           <span className="filter-dropdown-label"> Show all columns</span>
-        </a>
+        </a> */}
       </div>
     </div>
   );

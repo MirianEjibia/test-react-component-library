@@ -119,3 +119,7 @@ td {
 input[type="checkbox"] {
   accent-color: lightblue
   }
+.dropdown-menu-column-visibility {
+  right: 0px;
+  top: 2.5rem;
+}

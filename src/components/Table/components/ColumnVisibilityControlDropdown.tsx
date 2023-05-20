@@ -4,13 +4,7 @@ import { FcClearFilters } from "react-icons/fc";
 import { VscClearAll } from "react-icons/vsc";
 import { MdOutlineClearAll } from "react-icons/md";
 import { BsFilter } from "react-icons/bs";
-import {
-  BiSortUp,
-  BiSortDown,
-  BiColumns,
-  BiHide,
-  BiFilter,
-} from "react-icons/bi";
+import { HiViewColumns, HiOutlineViewColumns } from "react-icons/hi2";
 import { CustomSwitch } from "./CustomSwitch";
 
 interface DropdownProps {
@@ -64,7 +58,11 @@ export function ColumnVisibilityControlDropdown({
         onClick={() => setShowDropdown((prev) => !prev)}
       >
         <span className="table-options-icons-wrapper">
-          <BiColumns />
+          {table.getIsAllColumnsVisible() ? (
+            <HiViewColumns />
+          ) : (
+            <HiOutlineViewColumns />
+          )}
         </span>
       </button>
       <div

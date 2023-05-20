@@ -37,6 +37,7 @@ import {
   SortingFn,
   ColumnDef,
   FilterFns,
+  SortingState,
 } from "@tanstack/react-table";
 
 import "./Table.css";
@@ -131,6 +132,7 @@ const Table = ({ backgroundColo, size, spacing, color, align }: TableProps) => {
   const [globalFilter, setGlobalFilter] = React.useState("");
   const [dencityType, setDencityType] = useState(DencityTypes.medium);
   const [showColFilters, setShowColFilters] = useState(true);
+  const [sorting, setSorting] = React.useState<SortingState>([])
 
   const table = useReactTable({
     columns,
@@ -141,6 +143,7 @@ const Table = ({ backgroundColo, size, spacing, color, align }: TableProps) => {
       rowSelection,
       columnFilters,
       globalFilter,
+      sorting
     },
     filterFns: {
       fuzzy: fuzzyFilter,
@@ -156,6 +159,7 @@ const Table = ({ backgroundColo, size, spacing, color, align }: TableProps) => {
     getFacetedRowModel: getFacetedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
     getFacetedMinMaxValues: getFacetedMinMaxValues(),
+    onSortingChange: setSorting
   });
 
   useEffect(() => {
@@ -235,7 +239,7 @@ const Table = ({ backgroundColo, size, spacing, color, align }: TableProps) => {
           </div>
         )}
 
-        <div className=" d-flex">
+        <div className="d-flex">
           <DebouncedInput
             value={globalFilter ?? ""}
             onChange={(value) => setGlobalFilter(String(value))}
@@ -243,7 +247,6 @@ const Table = ({ backgroundColo, size, spacing, color, align }: TableProps) => {
               !showGlobalSearch && "hide-global-search"
             }`}
             placeholder="Search all columns..."
-            // type={ showGlobalSearch ? '': "hidden"}
             style={
               !showGlobalSearch
                 ? { width: "0px", padding: "4px 0px" }
@@ -265,15 +268,11 @@ const Table = ({ backgroundColo, size, spacing, color, align }: TableProps) => {
           </span>
           {
             <ColumnVisibilityControlDropdown
-              // column={header.column}
               table={table}
               showFilterColumn={showFilterColumn}
               setShowFilterColumn={setShowFilterColumn}
             />
           }
-          {/* <span className="table-options-icons-wrapper">
-            <BiColumns />
-          </span> */}
           <span className="table-options-icons-wrapper">
             {dencityType === DencityTypes.medium && (
               <MdDensityMedium

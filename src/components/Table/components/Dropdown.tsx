@@ -1,18 +1,16 @@
 import { Column, Table } from "@tanstack/react-table";
-import React, { useEffect, useRef, useState } from "react";
-import { FcClearFilters } from "react-icons/fc";
-import { VscClearAll } from "react-icons/vsc";
-import { MdOutlineClearAll } from "react-icons/md";
-import { BsFilter } from "react-icons/bs";
+import React, { useEffect, useRef } from "react";
+import { MdOutlineClearAll, MdOutlineFilterListOff } from "react-icons/md";
 import {
   BiSortUp,
   BiSortDown,
   BiColumns,
   BiHide,
   BiFilter,
+  BiRightArrow,
 } from "react-icons/bi";
-import { RefObject } from "react";
 import { LegacyRef } from "react";
+import { FilterTypesDropdown } from "./FilterTypesDropdown";
 
 interface showFilterColumnType {
   date_created: boolean;
@@ -32,15 +30,11 @@ interface DropdownProps {
   setShowFilterColumn: ({}) => void;
 }
 
-export function Dropdown({
-  table,
-  column,
-  showFilterColumn,
-  setShowFilterColumn,
-}: DropdownProps) {
+export function Dropdown(props: DropdownProps) {
+  const { table, column, showFilterColumn, setShowFilterColumn } = props;
+  console.log('showFilterColumn', showFilterColumn)
   const dropdownRef = useRef<HTMLElement>(null);
 
-  //   useEffect(() => console.log("mount"), []);
   useEffect(() => {
     if (showFilterColumn[column.id as keyof showFilterColumnType]) {
       let handler = (e: Event) => {
@@ -56,14 +50,12 @@ export function Dropdown({
     }
   });
 
-  console.log("showFilterColumn", showFilterColumn);
   const getAllColumnIds = () => table.getAllColumns().map((c) => c.id);
 
   const showColumnFilterDropdown = (colId: string | undefined) => {
     let showColumnsObj = {};
     getAllColumnIds().map((ci) => ((showColumnsObj as any)[ci] = ci === colId));
     setShowFilterColumn(showColumnsObj);
-    console.log("showColumnsObj");
   };
   const sortingState: { id: string; desc: boolean }[] =
     table.getState()?.sorting;
@@ -80,7 +72,19 @@ export function Dropdown({
       : stateCopy.push({ id: column.id, desc: desc });
     table.setSorting(stateCopy);
   };
+
+  const removeFilterHandler = () => {
+    const removed = [...table.getState().columnFilters].filter(
+      (f) => f.id !== column.id
+    );
+    table.setColumnFilters(removed);
+  };
   
+  const handleColumnVisibility = ()=> {
+    column.toggleVisibility(false)
+    
+  }
+
   return column.getCanFilter() ? (
     <div
       className="dropdown"
@@ -141,19 +145,40 @@ export function Dropdown({
             Sort by {column.id} descending
           </span>
         </a>
-        <a className="dropdown-item text-style">
-          <VscClearAll className="filter-dropdown-icon" size={18} />
+        <a
+          className={`dropdown-item text-style ${
+            column.getIsFiltered() ? "" : "disabled"
+          }`}
+          onClick={removeFilterHandler}
+        >
+          <MdOutlineFilterListOff
+            className={`filter-dropdown-icon`}
+            size={18}
+          />
           <span className="filter-dropdown-label">Cleare filter</span>
         </a>
-        <a className="dropdown-item text-style border_bottom">
-          <BiFilter className="filter-dropdown-icon" size={18} />
-          <span className="filter-dropdown-label"> Filter by {column.id}</span>
+        <a
+          className={
+            "dropdown-item text-style border_bottom d-flex justify-content-between align-items-center"
+          }
+        >
+          <div>
+            <BiFilter className="filter-dropdown-icon" size={18} />
+            <span className="filter-dropdown-label">
+              {" "}
+              Filter by {column.id}
+            </span>
+          </div>
+          <FilterTypesDropdown {...props} />
+          {/* <span className="filter-types-dropdown">
+            <BiRightArrow />
+          </span> */}
         </a>
-        <a className="dropdown-item text-style">
+        <a className="dropdown-item text-style" onClick={handleColumnVisibility}>
           <BiHide className="filter-dropdown-icon" size={18} />
-          <span className="filter-dropdown-label"> Hide Column{column.id}</span>
+          <span className="filter-dropdown-label"> Hide Column {column.id}</span>
         </a>
-        <a className="dropdown-item text-style">
+        <a className={`dropdown-item text-style ${table.getIsAllColumnsVisible()? 'disabled': ''}`} onClick={table.toggleAllColumnsVisible}>
           <BiColumns className="filter-dropdown-icon" size={18} />
           <span className="filter-dropdown-label"> Show all columns</span>
         </a>

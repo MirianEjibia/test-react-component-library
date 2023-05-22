@@ -98,34 +98,6 @@ export function ColumnVisibilityControlDropdown({
             </a>
           );
         })}
-        {/* <a className="dropdown-item text-style pl-1 d-flex">
-          <CustomSwitch checked={true} />
-          <span className="filter-dropdown-label">Cleare Sort </span>
-        </a>
-        <a className="dropdown-item text-style d-flex" href="#">
-          <CustomSwitch checked={true} />
-          <span className="filter-dropdown-label">Sort by ascending</span>
-        </a>
-        <a className="dropdown-item text-style border_bottom d-flex" href="#">
-          <CustomSwitch checked={true} />
-          <span className="filter-dropdown-label">Sort by descending</span>
-        </a>
-        <a className="dropdown-item text-style d-flex"  href="#">
-          <CustomSwitch checked={true} />
-          <span className="filter-dropdown-label">Cleare filter</span>
-        </a>
-        <a className="dropdown-item text-style border_bottom d-flex" href="#">
-          <CustomSwitch checked={true} />
-          <span className="filter-dropdown-label"> Filter by </span>
-        </a>
-        <a className="dropdown-item text-style d-flex" href="#">
-          <CustomSwitch checked={true} />
-          <span className="filter-dropdown-label"> Hide Column</span>
-        </a>
-        <a className="dropdown-item text-style d-flex" href="#">
-          <CustomSwitch checked={true} />
-          <span className="filter-dropdown-label"> Show all columns</span>
-        </a> */}
       </div>
     </div>
   );

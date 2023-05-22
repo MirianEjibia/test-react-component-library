@@ -176,6 +176,7 @@ const Table = ({ backgroundColo, size, spacing, color, align }: TableProps) => {
     );
     setColumnFilters(filtered);
   };
+  
   const toggleGlobalSearch = () => setShowGlobalSearch((prev) => !prev);
 
   function toggleFullScreen(elementRef: RefObject<HTMLElement>) {

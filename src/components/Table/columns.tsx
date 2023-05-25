@@ -1,17 +1,22 @@
 import {
   ColumnDef,
+  FilterFn,
   IdentifiedColumnDef,
   createColumnHelper,
+  filterFns,
 } from "@tanstack/react-table";
 import { User } from "./models";
 import IndeterminateCheckbox from "./components/IndeterminateCheckbox";
 import React from "react";
 import { DateRangeColumnFilter } from "./components/DateRangeColumnFilter";
 import { Filter } from "./components/Filter";
+import { Table } from "react-bootstrap";
 
 const columnHelper = createColumnHelper<User>();
 
-export const COLUMNS: ColumnDef<User, any>[] = [
+export const getColumns: (filterFn: FilterFn<any>) => ColumnDef<User, any>[] = (
+  filterFn
+) => [
   columnHelper.display({
     id: "select",
     header: ({ table }) => (
@@ -48,6 +53,32 @@ export const COLUMNS: ColumnDef<User, any>[] = [
     header: "First Name",
     meta: {
       filterComponent: (props: any) => <Filter {...props} />,
+    },
+    filterFn: filterFn,
+    cell: (props) => {
+      const cellValue = props.cell.getValue();
+      const globalFilterValue = props.table.getState().globalFilter;
+      const colFilterValue = props.table
+        .getState()
+        .columnFilters.find((cf) => cf.id === props.cell.column.id)?.value;
+      const subStrings = cellValue.split(colFilterValue);
+      console.log("subStrings", subStrings, cellValue, colFilterValue);
+      return subStrings.length === 2 ? (
+        <>
+          <span>{subStrings[0]}</span>
+          <span style={{ backgroundColor: "yellow" }}>{colFilterValue}</span>
+          <span>{subStrings[1]}</span>
+        </>
+      ) : (
+        <span> {cellValue} </span>
+      );
+      // console.log(
+      //   "props",
+      //   props.table
+      //     .getState()
+      //     .columnFilters.find((cf) => cf.id === props.cell.column.id)?.value,
+      //   props.cell.getValue()
+      // );
     },
   }),
   columnHelper.accessor("last_name", {

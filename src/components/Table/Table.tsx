@@ -1,6 +1,6 @@
 import React, { RefObject, useEffect, useRef } from "react";
 import { useMemo, useState } from "react";
-import { COLUMNS } from "./columns";
+import { getColumns } from "./columns";
 import "bootstrap/dist/css/bootstrap.css";
 import PropTypes from "prop-types";
 import {
@@ -42,7 +42,7 @@ import {
 
 import "./Table.css";
 
-import { useTable, usePagination } from "react-table";
+import { useTable, usePagination, useFilters } from "react-table";
 
 import {
   RankingInfo,
@@ -52,7 +52,14 @@ import {
 import DebouncedInput from "./components/DebouncedInput";
 import { Filter } from "./components/Filter";
 import TestSelect from "./components/TestSelect";
-import { dateFilterFn } from "./helperFunction/filterFunctions/dateFilterFn";
+import {
+  dateFilterFn,
+  containsFilterFn,
+  fuzzyFilter,
+  startsWithFilterFn,
+  filterFnTypes,
+  filterFunctions,
+} from "./helperFunction/filterFunctions";
 import { icons } from "react-icons";
 import { Dropdown } from "./components/Dropdown";
 import { ColumnVisibilityControlDropdown } from "./components/ColumnVisibilityControlDropdown";
@@ -70,9 +77,11 @@ enum DencityTypesInPixels {
 }
 
 declare module "@tanstack/table-core" {
-  interface FilterFns {
+  export interface FilterFns {
     fuzzy: FilterFn<unknown>;
     dateFilter: FilterFn<unknown>;
+    containsFilter: FilterFn<unknown>;
+    startsWithFilter: FilterFn<unknown>;
   }
   interface FilterMeta {
     itemRank: RankingInfo;
@@ -81,34 +90,6 @@ declare module "@tanstack/table-core" {
     filterComponent: any;
   }
 }
-
-const fuzzyFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
-  // Rank the item
-  const itemRank = rankItem(row.getValue(columnId), value);
-
-  // Store the itemRank info
-  addMeta({
-    itemRank,
-  });
-
-  // Return if the item should be filtered in/out
-  return itemRank.passed;
-};
-
-const fuzzySort: SortingFn<any> = (rowA, rowB, columnId) => {
-  let dir = 0;
-
-  // Only sort by rank if the column has ranking information
-  if (rowA.columnFiltersMeta[columnId]) {
-    dir = compareItems(
-      rowA.columnFiltersMeta[columnId]?.itemRank!,
-      rowB.columnFiltersMeta[columnId]?.itemRank!
-    );
-  }
-
-  // Provide an alphanumeric fallback for when the item ranks are equal
-  return dir === 0 ? sortingFns.alphanumeric(rowA, rowB, columnId) : dir;
-};
 
 interface TableProps {
   backgroundColo: string;
@@ -119,7 +100,9 @@ interface TableProps {
 }
 
 const Table = ({ backgroundColo, size, spacing, color, align }: TableProps) => {
-  const columns = useMemo(() => COLUMNS, []);
+  const [filterFnType, setFilterFnType] = useState<string>(filterFnTypes.fuzzy);
+
+  const columns = useMemo(() => getColumns(filterFunctions.find(f=>f.key===filterFnType)?.function!), [filterFnType]);
   const data = useMemo(() => require("./MOCK_DATA.json"), []);
   const ref = useRef<HTMLElement>(null);
   const [showFilterColumn, setShowFilterColumn] = useState({});
@@ -132,8 +115,8 @@ const Table = ({ backgroundColo, size, spacing, color, align }: TableProps) => {
   const [globalFilter, setGlobalFilter] = React.useState("");
   const [dencityType, setDencityType] = useState(DencityTypes.medium);
   const [showColFilters, setShowColFilters] = useState(true);
-  const [sorting, setSorting] = React.useState<SortingState>([])
-
+  const [sorting, setSorting] = React.useState<SortingState>([]);
+// console.log('filterFnType',filterFunctions.find(f=>f.key===filterFnType)?.function!)
   const table = useReactTable({
     columns,
     data,
@@ -143,11 +126,13 @@ const Table = ({ backgroundColo, size, spacing, color, align }: TableProps) => {
       rowSelection,
       columnFilters,
       globalFilter,
-      sorting
+      sorting,
     },
     filterFns: {
-      fuzzy: fuzzyFilter,
+      fuzzy:  filterFunctions.find(f=>f.key===filterFnType)?.function!,
       dateFilter: dateFilterFn,
+      containsFilter: containsFilterFn,
+      startsWithFilter: startsWithFilterFn,
     },
     enableRowSelection: true,
     onRowSelectionChange: setRowSelection,
@@ -159,7 +144,7 @@ const Table = ({ backgroundColo, size, spacing, color, align }: TableProps) => {
     getFacetedRowModel: getFacetedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
     getFacetedMinMaxValues: getFacetedMinMaxValues(),
-    onSortingChange: setSorting
+    onSortingChange: setSorting,
   });
 
   useEffect(() => {
@@ -176,7 +161,7 @@ const Table = ({ backgroundColo, size, spacing, color, align }: TableProps) => {
     );
     setColumnFilters(filtered);
   };
-  
+
   const toggleGlobalSearch = () => setShowGlobalSearch((prev) => !prev);
 
   function toggleFullScreen(elementRef: RefObject<HTMLElement>) {
@@ -342,6 +327,7 @@ const Table = ({ backgroundColo, size, spacing, color, align }: TableProps) => {
                               column={header.column}
                               table={table}
                               showFilterColumn={showFilterColumn}
+                              setFilterFnType={setFilterFnType}
                               setShowFilterColumn={setShowFilterColumn}
                             />
                           )}

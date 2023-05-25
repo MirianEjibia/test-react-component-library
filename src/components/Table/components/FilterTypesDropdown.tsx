@@ -13,6 +13,7 @@ import {
 import { LegacyRef } from "react";
 import { VscSearchFuzzy } from "react-icons/vsc";
 import {TbBracketsContain, TbBracketsContainEnd, TbBracketsContainStart, TbEqual} from 'react-icons/tb'
+import { filterFnTypes, startsWithFilterFn } from "../helperFunction/filterFunctions";
 interface showFilterColumnType {
   date_created: boolean;
   email: boolean;
@@ -27,11 +28,15 @@ interface showFilterColumnType {
 interface FilterTypesDropdownProps {
   column: Column<any>;
   table: Table<any>;
+  setFilterFnType: React.Dispatch<React.SetStateAction<{}>>
+  setShowFilterColumn: ({}) => void;
 }
 
 export function FilterTypesDropdown({
   table,
   column,
+  setFilterFnType,
+  setShowFilterColumn
 }: FilterTypesDropdownProps) {
   const dropdownRef = useRef<HTMLElement>(null);
   const [showDropdown, setShowDropdown] = useState(false);
@@ -66,12 +71,12 @@ export function FilterTypesDropdown({
     table.setSorting(stateCopy);
   };
 
-  const removeFilterHandler = () => {
-    const removed = [...table.getState().columnFilters].filter(
-      (f) => f.id !== column.id
-    );
-    table.setColumnFilters(removed);
-  };
+
+  const changFilterFnHandler = (filterType: string) => {
+    setShowFilterColumn({})
+    setFilterFnType(filterType)
+    column.setFilterValue('')
+  }
 
   return column.getCanFilter() ? (
     <div
@@ -98,35 +103,35 @@ export function FilterTypesDropdown({
       >
         <a
           className={`dropdown-item text-style pl-1`}
-          onClick={column.clearSorting}
+          onClick={()=>changFilterFnHandler(filterFnTypes.fuzzy)}
         >
           <VscSearchFuzzy className="filter-dropdown-icon" size={18} />
           <span className="filter-dropdown-label"> Fuzzy</span>
         </a>
         <a
           className={`dropdown-item text-style pl-1`}
-          onClick={column.clearSorting}
+          onClick={()=>changFilterFnHandler(filterFnTypes.contains)}
         >
           <TbBracketsContain className="filter-dropdown-icon" size={18} />
           <span className="filter-dropdown-label"> Contains</span>
         </a>
         <a
           className={`dropdown-item text-style pl-1`}
-          onClick={column.clearSorting}
+          onClick={()=>changFilterFnHandler(filterFnTypes.startsWith)}
         >
           <TbBracketsContainStart className="filter-dropdown-icon" size={18} />
           <span className="filter-dropdown-label"> Starts with</span>
         </a>
         <a
           className={`dropdown-item text-style pl-1`}
-          onClick={column.clearSorting}
+          onClick={()=>changFilterFnHandler(filterFnTypes.endsWith)}
         >
           <TbBracketsContainEnd className="filter-dropdown-icon" size={18} />
           <span className="filter-dropdown-label"> Ends with</span>
         </a>
         <a
           className={`dropdown-item text-style pl-1`}
-          onClick={column.clearSorting}
+          onClick={()=>changFilterFnHandler(filterFnTypes.equals)}
         >
           <TbEqual className="filter-dropdown-icon" size={18} />
           <span className="filter-dropdown-label"> Equals</span>
